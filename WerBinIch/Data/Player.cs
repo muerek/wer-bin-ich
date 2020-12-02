@@ -11,6 +11,8 @@ namespace WerBinIch.Data
 
         public string Persona { get; set; } = string.Empty;
 
-        public Player PersonaCreator { get; set; }
+        public Player? PersonaCreator { get; set; } = null;
+
+        public Guid Guid { get; set; } = new Guid();
     }
 }

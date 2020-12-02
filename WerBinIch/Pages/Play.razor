@@ -9,20 +9,27 @@
 {
     <FindGame @bind-Game="game" />
 }
-@* User has found an open game. *@
-else if (game.Status == GameStatus.PlayersJoining)
+@* User has found an open game but has not joined yet. *@
+else if (player == null && game.Status == GameStatus.PlayersJoining)
 {
     <AddPlayer Game="game" @bind-Player="player" />
 }
-else
+@* User has found an open game and has joined. *@
+else if (player != null && game.Status == GameStatus.PlayersJoining)
 {
-    <p>Hallo @player.Name</p>
-    if (game.Status == GameStatus.PersonaAssignment)
-    {
-        <h3>Charakter zuweisen</h3>
-        <p>Du darfst {} einen Charakter zuweisen, den er/sie dann erraten muss. Wer soll es sein?</p>
-        
-    }
+    <h3>Hallo @player.Name!</h3>
+    <p>Einen Moment noch, bis alle da sind... gleich geht es los.</p>
+}
+@* Game has been closed for joining and moved to persona assignment. *@
+else if (game.Status == GameStatus.PersonaAssignment)
+{
+    <h3>Charakter zuweisen</h3>
+    <p>Du darfst {} einen Charakter zuweisen, den er/sie dann erraten muss. Wer soll es sein?</p>
+}
+@* Game has been started. *@
+else if (game.Status == GameStatus.Playing)
+{
+
 }
 
 @code {
