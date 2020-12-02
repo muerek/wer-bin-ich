@@ -1,0 +1,20 @@
+﻿<h3>Spiel anlegen</h3>
+<p>Spielleiter können mit dem richtigen Kennwort neue Spiele starten.</p>
+<input type="password" class="form-control" placeholder="Spielleiter-Kennwort" @bind="passwordProvided" />
+<button class="btn btn-primary" type="button" @onclick="() => Submit()">Starten</button>
+
+@code {
+    [Parameter]
+    public EventCallback HostGameCallback { get; set; }
+    
+    private readonly string password = "rab1920";
+    private string passwordProvided = string.Empty;
+
+    private async Task Submit()
+    {
+        if (password == passwordProvided)
+        {
+            await HostGameCallback.InvokeAsync();
+        }
+    }
+}

@@ -1,0 +1,40 @@
+﻿@inject GameService GameService
+
+<h3>Spiel beitreten</h3>
+<p>
+    Um mitzumachen, brauchst du einen Spielschlüssel von deinem Spielleiter.
+</p>
+<input type="text" class="form-control" placeholder="Schlüssel" @bind="GameKey" />
+<button type="button" class="btn btn-primary" @onclick="async () => await LoadGameAsync()">Spiel finden</button>
+
+@code {
+    /// <summary>
+    /// If already known, the game key can be passed in directly.
+    /// This is for future use if we want to add routes with included game keys.
+    /// </summary>
+    [Parameter]
+    public string? GameKey { get; set; } = null;
+
+    [Parameter]
+    public Game? Game { get; set; } = null;
+
+    [Parameter]
+    public EventCallback<Game> GameChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (GameKey != null)
+        {
+            await LoadGameAsync();
+        }
+    }
+
+    private async Task LoadGameAsync()
+    {
+        if (!string.IsNullOrEmpty(GameKey)
+            && GameService.TryFindGame(GameKey, out Game? loadedGame))
+        {
+            await GameChanged.InvokeAsync(loadedGame);
+        }
+    }
+}

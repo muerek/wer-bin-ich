@@ -1,0 +1,29 @@
+﻿@page "/host"
+
+@inject GameService GameService
+
+<h1>Spiel leiten</h1>
+
+@if (game == null)
+{
+    <HostNewGame HostGameCallback="HostGame" />
+}
+else if (game.Status == GameStatus.PlayersJoining)
+{
+    <WaitForPlayers Game="game" StartGameCallback="Nothing" />
+}
+
+
+@code {
+    private Game? game = null;
+
+    public void HostGame()
+    {
+        game = GameService.HostNewGame();
+    }
+
+    public void Nothing()
+    {
+        return;
+    }
+}

@@ -1,0 +1,36 @@
+﻿<h3>Warte auf Spieler</h3>
+<p>
+    Dein Spiel ist erstellt! Spieler können jetzt beitreten. Lade deine Mitspieler mit dem Schlüssel @Game.Key ein.
+</p>
+<p>
+    Diese Spieler sind bereits an Bord:
+</p>
+<ul>
+    @foreach (var player in Game.Players)
+    {
+        <li>@player.Name</li>
+    }
+</ul>
+<p>
+    Wenn alle da sind, kannst du das Spiel starten.
+</p>
+<button type="button" class="btn btn-primary">Spiel starten</button>
+
+@code {
+    [Parameter]
+    public Game Game { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback StartGameCallback { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Game.PlayerJoined += OnPlayerJoined;
+    }
+
+    private void OnPlayerJoined(object? sender, EventArgs e)
+    {
+        // Use InvokeAsync to call in the right thread.
+        InvokeAsync(() => StateHasChanged());
+    }
+}

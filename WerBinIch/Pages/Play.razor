@@ -1,0 +1,32 @@
+﻿@page "/play"
+
+@inject GameService GameService
+
+<h1>Mitspielen</h1>
+
+@* User is not in any game yet. *@
+@if (game == null)
+{
+    <FindGame @bind-Game="game" />
+}
+@* User has found an open game. *@
+else if (game.Status == GameStatus.PlayersJoining)
+{
+    <AddPlayer Game="game" @bind-Player="player" />
+}
+else
+{
+    <p>Hallo @player.Name</p>
+    if (game.Status == GameStatus.PersonaAssignment)
+    {
+        <h3>Charakter zuweisen</h3>
+        <p>Du darfst {} einen Charakter zuweisen, den er/sie dann erraten muss. Wer soll es sein?</p>
+        
+    }
+}
+
+@code {
+    private Game? game = null;
+    private Player? player = null;
+
+}
