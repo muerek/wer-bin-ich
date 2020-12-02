@@ -1,0 +1,37 @@
+﻿<h3>ShowPersonas</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Spielername</th>
+            <th>Charakter</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Game.Players)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>
+                    @* Do not show the own assigned persona. *@
+                    @if (player.Guid == Player.Guid)
+                    {
+                        @: ???
+                    }
+                    else
+                    {
+                        @player.Persona
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public Game Game { get; set; } = null!;
+
+    [Parameter]
+    public Player Player { get; set; } = null!;
+}

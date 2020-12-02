@@ -1,0 +1,31 @@
+﻿<h3>Charakter zuweisen</h3>
+<p>
+    Du darfst @targetPlayer.Name einen Charakter zuweisen, den er/sie dann erraten muss. Wer soll es sein?
+</p>
+<input type="text" placeholder="Charakter" @bind="persona" />
+<button type="button" class="btn btn-primary" @onclick="AssignPersona">Teilnehmen</button>
+
+@code {
+    [Parameter]
+    public Game Game { get; set; } = null!;
+
+    [Parameter]
+    public Player Player { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback ContinueCallback { get; set; }
+
+    private Player targetPlayer = new Player();
+    private string persona = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        targetPlayer = Game.Players.First(p => p.PersonaCreator?.Guid == Player.Guid);
+    }
+
+    private async void AssignPersona()
+    {
+        Game.AssingPersona(targetPlayer, persona);
+        await ContinueCallback.InvokeAsync();
+    }
+}

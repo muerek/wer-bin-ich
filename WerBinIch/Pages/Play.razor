@@ -10,30 +10,49 @@
     <FindGame @bind-Game="game" />
 }
 @* User has found an open game but has not joined yet. *@
-else if (player == null && game.Status == GameStatus.PlayersJoining)
+else if (player == null)
 {
-    <AddPlayer Game="game" @bind-Player="player" />
+    @* User can only join if the game is in the joining phase. *@
+    @if (game.Status == GameStatus.PlayersJoining)
+    {
+        <AddPlayer Game="game" @bind-Player="player" />
+    }
+    else
+    {
+        <h3>Spiel bereits gestartet</h3>
+        <p>Dein Schlüssel ist korrekt, aber du kannst diesem Spiel nicht mehr beitreten.</p>
+        <button class="btn btn-primary" @onclick="Reset">Neu starten</button>
+    }
 }
-@* User has found an open game and has joined. *@
-else if (player != null && game.Status == GameStatus.PlayersJoining)
+@* User has found an open game and has joined as a player. *@
+else if (game.Status == GameStatus.PlayersJoining)
 {
-    <h3>Hallo @player.Name!</h3>
-    <p>Einen Moment noch, bis alle da sind... gleich geht es los.</p>
+    <WaitForStart Player="player" Game="game" ContinueCallback="UpdateView" />
 }
 @* Game has been closed for joining and moved to persona assignment. *@
 else if (game.Status == GameStatus.PersonaAssignment)
 {
-    <h3>Charakter zuweisen</h3>
-    <p>Du darfst {} einen Charakter zuweisen, den er/sie dann erraten muss. Wer soll es sein?</p>
+    <AssignPersonaToPlayer Game="game" Player="player" ContinueCallback="UpdateView" />
 }
 @* Game has been started. *@
 else if (game.Status == GameStatus.Playing)
 {
-
+    <ShowPersonas Game="game" Player="player" />
 }
 
 @code {
     private Game? game = null;
     private Player? player = null;
 
+    private void Reset()
+    {
+        game = null;
+        player = null;
+        StateHasChanged();
+    }
+
+    private void UpdateView()
+    {
+        StateHasChanged();
+    }
 }

@@ -1,0 +1,19 @@
+﻿<h3>Hallo @Player.Name!</h3>
+<p>Einen Moment noch, bis alle da sind... gleich geht es los.</p>
+
+@code {
+    [Parameter]
+    public Game Game { get; set; } = null!;
+
+    [Parameter]
+    public Player Player { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback ContinueCallback { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Wrap the event handler in InvokeAsync so it gets called in the right thread.
+        Game.PhaseChanged += (s, e) => InvokeAsync(() => ContinueCallback.InvokeAsync());
+    }
+}

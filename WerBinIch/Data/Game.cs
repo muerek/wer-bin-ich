@@ -17,7 +17,8 @@ namespace WerBinIch.Data
         public IList<Player> Players { get; private set; }
 
         public event EventHandler? PlayerJoined;
-        public event EventHandler? StatusChanged;
+        public event EventHandler? PersonaAssigned;
+        public event EventHandler? PhaseChanged;
 
         public Game()
         {
@@ -30,27 +31,58 @@ namespace WerBinIch.Data
             if (Status == GameStatus.PlayersJoining)
             {
                 Players.Add(player);
-                PlayerJoined?.Invoke(this, new EventArgs());
+                OnPlayerJoined();
             }
         }
 
         public void Start()
         {
             Status = GameStatus.PersonaAssignment;
-            StatusChanged?.Invoke(this, new EventArgs());
+            AssignPersonaCreators();
+            OnPhaseChanged();
         }
 
-        public void AssignPersonas()
+        public void AssingPersona(Player targetPlayer, string persona)
+        {
+            targetPlayer.Persona = persona;
+            OnPersonaAssigned();
+        }
+
+        public void FinalizePersonaAssignments()
         {
             Status = GameStatus.Playing;
-            StatusChanged?.Invoke(this, new EventArgs());
+            OnPhaseChanged();
         }
-    }
 
-    public enum GameStatus
-    {
-        PlayersJoining,
-        PersonaAssignment,
-        Playing
+        protected virtual void OnPlayerJoined()
+        {
+            PlayerJoined?.Invoke(this, new EventArgs());
+        }
+
+        protected virtual void OnPersonaAssigned()
+        {
+            PersonaAssigned?.Invoke(this, new EventArgs());
+        }
+
+        protected virtual void OnPhaseChanged()
+        {
+            PhaseChanged?.Invoke(this, new EventArgs());
+        }
+
+        private void AssignPersonaCreators()
+        {
+            // Use the randomly generated GUID to bring the players into a random order.
+            Players = Players.OrderBy(p => p.Guid).ToList();
+            // Shift the order by one to get the assignments.
+            var creators = Players.Skip(1).Concat(Players.Take(1)).ToList();
+            
+            // Merge the two lists into tuples that hold the assignments.
+            var assignments = Players.Zip(creators);
+            // Update the player list. This works because we have just passed references around.
+            foreach ((var player, var creator) in assignments)
+            {
+                player.PersonaCreator = creator;
+            }
+        }
     }
 }

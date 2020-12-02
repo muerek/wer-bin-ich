@@ -1,0 +1,61 @@
+﻿@implements IDisposable
+
+<h3>Warte auf Charakter-Zuordnung</h3>
+<p>
+    Die Mitspieler wurden aufgefordert, sich gegenseitig Charaktere zuzuweisen.
+</p>
+<p>
+    Diese Zuweisungen liegen schon vor:
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Spielername</th>
+            <th>Charakter</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Game.Players)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Persona</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p>
+    Wenn alle Mitspieler einen Charakter bekommen haben, kannst du die Zuweisungen freigeben.
+</p>
+<button type="button" class="btn btn-primary" @onclick="FinalizePersonaAssignment">Freigeben</button>
+
+@code {
+    [Parameter]
+    public Game Game { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback DoneCallback { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // The game will raise an event when personas are assigned.
+        Game.PersonaAssigned += OnPersonaAssigned;
+    }
+
+    private void OnPersonaAssigned(object? sender, EventArgs e)
+    {
+        // Use InvokeAsync to call in the right thread.
+        InvokeAsync(() => StateHasChanged());
+    }
+
+    private async void FinalizePersonaAssignment()
+    {
+        Game.FinalizePersonaAssignments();
+        await DoneCallback.InvokeAsync();
+    }
+
+    public void Dispose()
+    {
+        Game.PersonaAssigned -= OnPersonaAssigned;
+    }
+}

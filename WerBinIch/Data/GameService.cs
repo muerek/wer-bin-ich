@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace WerBinIch.Data
         /// <summary>
         /// Stores all current games.
         /// </summary>
-        private IList<Game> games = new List<Game>();
+        private readonly IList<Game> games = new List<Game>();
         
         /// <summary>
         /// Tries to find a game for the given game key.
@@ -18,9 +19,9 @@ namespace WerBinIch.Data
         /// <param name="gameKey">Game key to identify the game.</param>
         /// <param name="game">Game for this key.</param>
         /// <returns>True if game was found, false if not.</returns>
-        public bool TryFindGame(string gameKey, out Game game)
+        public bool TryFindGame(string gameKey, [NotNullWhen(true)] out Game? game)
         {
-            game = games.FirstOrDefault(g => g.Key.ToUpper() == gameKey.ToUpper());
+            game = games.FirstOrDefault(g => g.Key.ToUpper() == gameKey.ToUpper().Trim());
             return game != null;
         }
 
@@ -42,7 +43,7 @@ namespace WerBinIch.Data
 
         private string GenerateKey()
         {
-            string characters = "ABCDEFGHIJKLMNOPQRSTUWVXYZ123456789";
+            string characters = "ABCDEFGHJKLMNPQRSTUWVXYZ123456789";
             var rng = new Random();
 
             var keyCharacters = new char[6];

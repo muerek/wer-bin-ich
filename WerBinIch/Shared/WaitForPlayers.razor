@@ -1,4 +1,6 @@
-﻿<h3>Warte auf Spieler</h3>
+﻿@implements IDisposable
+
+<h3>Warte auf Spieler</h3>
 <p>
     Dein Spiel ist erstellt! Spieler können jetzt beitreten. Lade deine Mitspieler mit dem Schlüssel @Game.Key ein.
 </p>
@@ -14,17 +16,18 @@
 <p>
     Wenn alle da sind, kannst du das Spiel starten.
 </p>
-<button type="button" class="btn btn-primary">Spiel starten</button>
+<button type="button" class="btn btn-primary" @onclick="StartGame">Spiel starten</button>
 
 @code {
     [Parameter]
     public Game Game { get; set; } = null!;
 
     [Parameter]
-    public EventCallback StartGameCallback { get; set; }
+    public EventCallback DoneCallback { get; set; }
 
     protected override void OnInitialized()
     {
+        // The game will raise an event when players join.
         Game.PlayerJoined += OnPlayerJoined;
     }
 
@@ -32,5 +35,16 @@
     {
         // Use InvokeAsync to call in the right thread.
         InvokeAsync(() => StateHasChanged());
+    }
+
+    private async void StartGame()
+    {
+        Game.Start();
+        await DoneCallback.InvokeAsync();
+    }
+
+    public void Dispose()
+    {
+        Game.PlayerJoined -= OnPlayerJoined;
     }
 }

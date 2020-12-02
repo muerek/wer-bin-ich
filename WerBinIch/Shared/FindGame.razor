@@ -32,7 +32,7 @@
     private async Task LoadGameAsync()
     {
         if (!string.IsNullOrEmpty(GameKey)
-            && GameService.TryFindGame(GameKey, out Game? loadedGame))
+            && GameService.TryFindGame(GameKey, out Game loadedGame))
         {
             await GameChanged.InvokeAsync(loadedGame);
         }

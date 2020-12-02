@@ -1,20 +1,25 @@
-﻿<h3>Spiel anlegen</h3>
+﻿@inject GameService GameService
+
+<h3>Spiel anlegen</h3>
 <p>Spielleiter können mit dem richtigen Kennwort neue Spiele starten.</p>
 <input type="password" class="form-control" placeholder="Spielleiter-Kennwort" @bind="passwordProvided" />
-<button class="btn btn-primary" type="button" @onclick="() => Submit()">Starten</button>
+<button class="btn btn-primary" type="button" @onclick="HostGame">Starten</button>
 
 @code {
     [Parameter]
-    public EventCallback HostGameCallback { get; set; }
-    
+    public Game? Game { get; set; } = null;
+
+    [Parameter]
+    public EventCallback<Game> GameChanged { get; set; }
+
     private readonly string password = "rab1920";
     private string passwordProvided = string.Empty;
 
-    private async Task Submit()
+    private async Task HostGame()
     {
         if (password == passwordProvided)
         {
-            await HostGameCallback.InvokeAsync();
+            await GameChanged.InvokeAsync(GameService.HostNewGame());
         }
     }
 }
