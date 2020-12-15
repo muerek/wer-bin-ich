@@ -4,8 +4,13 @@
 <p>
     Um mitzumachen, brauchst du einen Spielschlüssel von deinem Spielleiter.
 </p>
-<input type="text" class="form-control" placeholder="Schlüssel" @bind="GameKey" />
-<button type="button" class="btn btn-primary" @onclick="async () => await LoadGameAsync()">Spiel finden</button>
+<div class="alert alert-warning @(showAlert ? "" : "d-none")" role="alert">
+    Ungültiger Spielschlüssel!
+</div>
+<div class="form-group">
+    <input type="text" class="form-control" placeholder="Schlüssel" @bind="GameKey" />
+    <button type="button" class="btn btn-primary my-2" @onclick="async () => await LoadGameAsync()">Spiel finden</button>
+</div>
 
 @code {
     /// <summary>
@@ -21,6 +26,8 @@
     [Parameter]
     public EventCallback<Game> GameChanged { get; set; }
 
+    private bool showAlert = false;
+
     protected override async Task OnInitializedAsync()
     {
         if (GameKey != null)
@@ -35,6 +42,10 @@
             && GameService.TryFindGame(GameKey, out Game loadedGame))
         {
             await GameChanged.InvokeAsync(loadedGame);
+        }
+        else
+        {
+            showAlert = true;
         }
     }
 }

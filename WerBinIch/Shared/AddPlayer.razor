@@ -4,8 +4,11 @@
 <p>
     Bitte gib deinen Namen ein, damit wir dich erkennen können.
 </p>
-<input type="text" placeholder="Name" @bind="name" />
-<button type="button" class="btn btn-primary" @onclick="async () => await JoinGameAsync()">Teilnehmen</button>
+<div class="form-group">
+    <input type="text" class="form-control" placeholder="Name" @bind="name" />
+    <button type="button" class="btn btn-primary my-2" @onclick="async () => await JoinGameAsync()">Teilnehmen</button>
+</div>
+
 
 @code {
     [Parameter]

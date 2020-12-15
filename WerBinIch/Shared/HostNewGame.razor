@@ -2,8 +2,15 @@
 
 <h3>Spiel anlegen</h3>
 <p>Spielleiter können mit dem richtigen Kennwort neue Spiele starten.</p>
-<input type="password" class="form-control" placeholder="Spielleiter-Kennwort" @bind="passwordProvided" />
-<button class="btn btn-primary" type="button" @onclick="HostGame">Starten</button>
+
+<div class="alert alert-warning @(showAlert ? "" : "d-none")" role="alert">
+    Falsches Spielleiter-Kennwort!
+</div>
+
+<div class="form-group">
+    <input type="password" class="form-control" placeholder="Spielleiter-Kennwort" @bind="passwordProvided" />
+    <button class="btn btn-primary my-2" type="button" @onclick="HostGame">Starten</button>
+</div>
 
 @code {
     [Parameter]
@@ -12,6 +19,7 @@
     [Parameter]
     public EventCallback<Game> GameChanged { get; set; }
 
+    private bool showAlert = false;
     private readonly string password = "rab1920";
     private string passwordProvided = string.Empty;
 
@@ -20,6 +28,11 @@
         if (password == passwordProvided)
         {
             await GameChanged.InvokeAsync(GameService.HostNewGame());
+        }
+        else
+        {
+            showAlert = true;
+            passwordProvided = string.Empty;
         }
     }
 }

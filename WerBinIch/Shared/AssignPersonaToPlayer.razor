@@ -2,8 +2,11 @@
 <p>
     Du darfst @targetPlayer.Name einen Charakter zuweisen, den er/sie dann erraten muss. Wer soll es sein?
 </p>
-<input type="text" placeholder="Charakter" @bind="persona" />
-<button type="button" class="btn btn-primary" @onclick="AssignPersona">Teilnehmen</button>
+<div class="form-group">
+    <input type="text" class="form-control" placeholder="Charakter" @bind="persona" />
+    <button type="button" class="btn btn-primary my-2" @onclick="AssignPersona">Teilnehmen</button>
+</div>
+
 
 @code {
     [Parameter]
